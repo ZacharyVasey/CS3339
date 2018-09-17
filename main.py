@@ -33,9 +33,56 @@ def bin_to_dec(number = ""):
 #print bin, " in decimal is ", bin_to_dec(bin)
 #bin = "101000"
 #print bin, " in decimal is ", bin_to_dec(bin)
+#################################################################
+#def b():
+	#function
+#def andd():
+	#function
+#def add():
+	#function
+#def addi():
+	#function
+#def orr():
+	#function
+#def cbz():
+	#function
+#def cbnz():
+	#function
+#def sub():
+	#function
+#def subi():
+	#function
+#def movz():
+	#function
+#def movk():
+	#function
+#def lsr():
+	#function
+#def lsl():
+	#function
+#def stur():
+	#function
+#def ldur():
+	#function	
 
-#open and read file
-
+def btype():
+	print
+	#function
+def	c_btype():
+	print hello
+	#function
+def imtype():
+	print
+	#function
+def itype():
+	print
+	#function
+def rtype():
+	print
+	#function
+def dtype():
+	print
+	#function
 ################################################################
 #data structures
 ################################################################
@@ -53,7 +100,7 @@ binMem = [] 		# <type 'list'>: ['11111111111111111111111111111111', '11111111111
 valid = []
 opcode = []
 ################################################################
-
+#open and read file
 machineCodeFile = open("test2_bin.txt")
 machineCode = machineCodeFile.readlines()
 machineCodeFile.close()
@@ -62,52 +109,76 @@ for i in machineCode:
 	if(op >= 160 and op <= 191):
 		opcodeStr.append("B")
 		opcode.append(i[0:6])
+		validStr.append('Y')
 	elif(op == 1104):
 		opcodeStr.append("AND")
 		opcode.append(i[0:11])
+		validStr.append('Y')
 	elif(op == 1112):
 		opcodeStr.append("ADD")
 		opcode.append(i[0:11])
+		validStr.append('Y')
 	elif(op == 1160 or op == 1161):
 		opcodeStr.append("ADDI")
 		opcode.append(i[0:10])
+		validStr.append('Y')
 	elif(op == 1360):
 		opcodeStr.append("ORR")
 		opcode.append(i[0:11])
+		validStr.append('Y')
 	elif(op >= 1440 and op <= 1447):
 		opcodeStr.append("CBZ")
 		opcode.append(i[0:8])
+		validStr.append('Y')
 	elif(op >= 1448 and op <= 1455):
 		opcodeStr.append("CBNZ")
 		opcode.append(i[0:8])
+		validStr.append('Y')
 	elif(op == 1624):
 		opcodeStr.append("SUB")
 		opcode.append(i[0:11])
+		validStr.append('Y')
 	elif(op == 1672 and op == 1673):
 		opcodeStr.append("SUBI")
 		opcode.append(i[0:10])
+		validStr.append('Y')
 	elif((op >= 1648 and op <= 1687) and (op != 1672 or op != 1673)):
 		opcodeStr.append("MOVZ")
 		opcode.append(i[0:9])
+		validStr.append('Y')
 	elif(op >= 1940 and op <= 1943):
 		opcodeStr.append("MOVK")
 		opcode.append(i[0:9])
+		validStr.append('Y')
 	elif(op == 1690):
 		opcodeStr.append("LSR")
 		opcode.append(i[0:11])
+		validStr.append('Y')
 	elif(op == 1691):
 		opcodeStr.append("LSL")
 		opcode.append(i[0:11])
+		validStr.append('Y')
 	elif(op == 1984):
 		opcodeStr.append("STUR")
 		opcode.append(i[0:11])
+		validStr.append('Y')
 	elif(op == 1986):
 		opcodeStr.append("LDUR")
 		opcode.append(i[0:11])
+		validStr.append('Y')
 	elif(op == 2038):
 		opcodeStr.append("BREAK")
 		opcode.append(i[0:11])
-print opcodeStr
-print opcode
+		validStr.append('Y')
+	else:
+		opcodeStr.append("error")
+		opcode.append("")
+		validStr.append('N')
+for i in opcodeStr:
+	print i
+for i in opcode:
+	print i
+for i in validStr:
+	print i
 
 

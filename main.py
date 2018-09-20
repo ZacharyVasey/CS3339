@@ -77,8 +77,19 @@ def imtype():
 def itype():
 	print
 	#function
-def rtype():
-	print
+def rtype(arg1, arg1str, arg2, arg2str, arg3, arg3str, machineCode = ""):
+	arg3.append(machineCode[11:16])
+	temp = "R"
+	temp = temp + str(bin_to_dec(machineCode[11:16]))
+	arg3str.append(temp)
+	arg2.append(machineCode[22:27])
+	temp = "R"
+	temp = temp + str(bin_to_dec(machineCode[22:27]))
+	arg2str.append(temp)
+	arg1.append(machineCode[28:32])
+	temp = "R"
+	temp = temp + str(bin_to_dec(machineCode[28:32]))
+	arg1str.append(temp)
 	#function
 def dtype():
 	print
@@ -113,10 +124,12 @@ for i in machineCode:
 	elif(op == 1104):
 		opcodeStr.append("AND")
 		opcode.append(i[0:11])
+		rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
 		validStr.append('Y')
 	elif(op == 1112):
 		opcodeStr.append("ADD")
 		opcode.append(i[0:11])
+		rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
 		validStr.append('Y')
 	elif(op == 1160 or op == 1161):
 		opcodeStr.append("ADDI")
@@ -125,6 +138,7 @@ for i in machineCode:
 	elif(op == 1360):
 		opcodeStr.append("ORR")
 		opcode.append(i[0:11])
+		rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
 		validStr.append('Y')
 	elif(op >= 1440 and op <= 1447):
 		opcodeStr.append("CBZ")
@@ -137,6 +151,7 @@ for i in machineCode:
 	elif(op == 1624):
 		opcodeStr.append("SUB")
 		opcode.append(i[0:11])
+		rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
 		validStr.append('Y')
 	elif(op == 1672 and op == 1673):
 		opcodeStr.append("SUBI")
@@ -153,10 +168,12 @@ for i in machineCode:
 	elif(op == 1690):
 		opcodeStr.append("LSR")
 		opcode.append(i[0:11])
+		rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
 		validStr.append('Y')
 	elif(op == 1691):
 		opcodeStr.append("LSL")
 		opcode.append(i[0:11])
+		rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
 		validStr.append('Y')
 	elif(op == 1984):
 		opcodeStr.append("STUR")
@@ -179,6 +196,12 @@ for i in opcodeStr:
 for i in opcode:
 	print i
 for i in validStr:
+	print i
+for i in arg1Str:
+	print i
+for i in arg2Str:
+	print i
+for i in arg3Str:
 	print i
 
 

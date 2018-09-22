@@ -33,17 +33,17 @@ def get_spaced_instr(instr = ""):
 	# example '00100000000000010000000000001010' --> '0 01000 00000 00001 00000 00000 001010'
 	temp = "" + instr[0]
 	temp = temp + " "
-	temp = temp + instr[1:5]
+	temp = temp + instr[1:6]
 	temp = temp + " "
-	temp = temp + instr[6:10]
+	temp = temp + instr[6:11]
 	temp = temp + " "
-	temp = temp + instr[11:15]
+	temp = temp + instr[11:16]
 	temp = temp + " "
-	temp = temp + instr[16:20]
+	temp = temp + instr[16:21]
 	temp = temp + " "
-	temp = temp + instr[21:25]
+	temp = temp + instr[21:26]
 	temp = temp + " "
-	temp = temp + instr[26:31]
+	temp = temp + instr[26:32]
 	return temp 
 #	
 #bin = "1001011"
@@ -95,7 +95,19 @@ def	c_btype(machineCode = ""):
 def imtype(machineCode = ""):
 	print
 	#function
-def itype(machineCode = ""):
+def itype(arg1, arg1str, arg2, arg2str, arg3, arg3str, machineCode = ""):
+	arg3.append(machineCode[10:21])
+	temp = "#"
+	temp = temp + str(bin_to_dec(machineCode[10:21]))
+	arg3str.append(temp)
+	arg2.append(machineCode[22:26])
+	temp = "R"
+	temp = temp + str(bin_to_dec(machineCode[22:26]))
+	arg2str.append(temp)
+	arg1.append(machineCode[27:31])
+	temp = "\tR"
+	temp = temp + str(bin_to_dec(machineCode[27:31]))
+	arg1str.append(temp)
 	print
 	#function
 def rtype(arg1, arg1str, arg2, arg2str, arg3, arg3str, machineCode = ""):
@@ -108,7 +120,7 @@ def rtype(arg1, arg1str, arg2, arg2str, arg3, arg3str, machineCode = ""):
 	temp = temp + str(bin_to_dec(machineCode[22:27]))
 	arg2str.append(temp)
 	arg1.append(machineCode[28:32])
-	temp = "R"
+	temp = "\tR"
 	temp = temp + str(bin_to_dec(machineCode[28:32]))
 	arg1str.append(temp)
 	#function
@@ -136,6 +148,7 @@ opcode = []
 machineCodeFile = open("test2_bin.txt")
 machineCode = machineCodeFile.readlines()
 machineCodeFile.close()
+memCurrent = 96
 for i in machineCode:
 	op = bin_to_dec(i[0:11])
 	instrSpaced.append(get_spaced_instr(i))
@@ -157,7 +170,7 @@ for i in machineCode:
 	elif(op == 1160 or op == 1161):
 		opcodeStr.append("ADDI")
 		opcode.append(i[0:10])
-		#itype()
+		itype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
 		validStr.append('Y')
 	elif(op == 1360):
 		opcodeStr.append("ORR")
@@ -182,7 +195,7 @@ for i in machineCode:
 	elif(op == 1672 and op == 1673):
 		opcodeStr.append("SUBI")
 		opcode.append(i[0:10])
-		#itype()
+		itype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
 		validStr.append('Y')
 	elif((op >= 1648 and op <= 1687) and (op != 1672 or op != 1673)):
 		opcodeStr.append("MOVZ")
@@ -226,9 +239,10 @@ for i in machineCode:
 elementCount = 0
 for i in machineCode:
 	print "instruction " + str(elementCount)
-	#print "opcodeStr: " + opcode[elementCount]
-	#print "validStr: " + validStr[elementCount]
-	#print "instrSpaced: " + instrSpaced[elementCount]
+	elementCount = elementCount + 1
+	print "opcodeStr: " + opcodeStr[elementCount]
+	print "validStr: " + validStr[elementCount]
+	print "instrSpaced: " + instrSpaced[elementCount]
 	print "arg1: " + arg1[elementCount]
 	print "arg2: " + arg2[elementCount]
 	print "arg3: " + arg3[elementCount]
@@ -239,18 +253,6 @@ for i in machineCode:
 	#print "binMem: " + binMem[elementCount]
 	#print "valid: " + valid[elementCount]
 	print "opcode: " + opcode[elementCount]
-	opcodeStr = []  	# <type 'list'>: ['Invalid Instruction', 'ADDI', 'SW', 'Invalid Instruction', 'LW', 'BLTZ', 'SLL',...]
-	validStr= [] 		# <type 'list'>: ['N', 'Y', 'Y', 'N', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y',...]
-	instrSpaced = [] 	# <type 'list'>: ['0 01000 00000 00001 00000 00000 001010', '1 01000 00000 00001 00000 00000 001010',...]
-	arg1 = [] 			# <type 'list'>: [0, 0, 0, 0, 0, 1, 1, 10, 10, 0, 3, 4, 152, 4, 10, 1, 0, 112, 0]
-	arg2 = [] 			# <type 'list'>: [0, 1, 1, 0, 1, 0, 10, 3, 4, 5, 0, 5, 0, 5, 6, 1, 1, 0, 0]
-	arg3 = [] 			# <type 'list'>: [0, 10, 264, 0, 264, 48, 2, 172, 216, 260, 8, 6, 0, 6, 172, -1, 264, 0, 0]
-	arg1Str = [] 		# <type 'list'>: ['', '\tR1', '\tR1', '', '\tR1', '\tR1', '\tR10', '\tR3', '\tR4', .....]
-	arg2Str = [] 		# <type 'list'>: ['', ', R0', ', 264', '', ', 264', ', #48', ', R1', ', 172', ', 216', ...]
-	arg3Str = [] 		# <type 'list'>: ['', ', #10', '(R0)', '', '(R0)', '', ', #2', '(R10)', '(R10)', '(R0)',...]
-	mem = [] 			# <type 'list'>: [-1, -2, -3, 1, 2, 3, 0, 0, 5, -5, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]
-	binMem = [] 		# <type 'list'>: ['11111111111111111111111111111111', '11111111111111111111111111111110', ...]
-	valid = []
-	opcode = []
+	
 
 

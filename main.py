@@ -24,6 +24,27 @@ def bin_to_dec(number = ""):
 	#return the decimal number
 	return decimal_number
 ################################################################
+def get_spaced_instr(instr = ""):
+	#verify instruction is 32 bits
+	if(True):
+		#return "error"
+		print str(len(instr))
+	
+	# example '00100000000000010000000000001010' --> '0 01000 00000 00001 00000 00000 001010'
+	temp = "" + instr[0]
+	temp = temp + " "
+	temp = temp + instr[1:6]
+	temp = temp + " "
+	temp = temp + instr[6:11]
+	temp = temp + " "
+	temp = temp + instr[11:16]
+	temp = temp + " "
+	temp = temp + instr[16:21]
+	temp = temp + " "
+	temp = temp + instr[21:26]
+	temp = temp + " "
+	temp = temp + instr[26:32]
+	return temp 
 #	
 #bin = "1001011"
 #print bin, " in decimal is ", bin_to_dec(bin)
@@ -33,9 +54,79 @@ def bin_to_dec(number = ""):
 #print bin, " in decimal is ", bin_to_dec(bin)
 #bin = "101000"
 #print bin, " in decimal is ", bin_to_dec(bin)
+#################################################################
+#def b():
+	#function
+#def andd():
+	#function
+#def add():
+	#function
+#def addi():
+	#function
+#def orr():
+	#function
+#def cbz():
+	#function
+#def cbnz():
+	#function
+#def sub():
+	#function
+#def subi():
+	#function
+#def movz():
+	#function
+#def movk():
+	#function
+#def lsr():
+	#function
+#def lsl():
+	#function
+#def stur():
+	#function
+#def ldur():
+	#function	
 
-#open and read file
-
+def btype(machineCode = ""):
+	print
+	#function
+def	c_btype(machineCode = ""):
+	print hello
+	#function
+def imtype(machineCode = ""):
+	print
+	#function
+def itype(arg1, arg1str, arg2, arg2str, arg3, arg3str, machineCode = ""):
+	arg3.append(machineCode[10:21])
+	temp = "#"
+	temp = temp + str(bin_to_dec(machineCode[10:21]))
+	arg3str.append(temp)
+	arg2.append(machineCode[22:26])
+	temp = "R"
+	temp = temp + str(bin_to_dec(machineCode[22:26]))
+	arg2str.append(temp)
+	arg1.append(machineCode[27:31])
+	temp = "\tR"
+	temp = temp + str(bin_to_dec(machineCode[27:31]))
+	arg1str.append(temp)
+	print
+	#function
+def rtype(arg1, arg1str, arg2, arg2str, arg3, arg3str, machineCode = ""):
+	arg3.append(machineCode[11:16])
+	temp = "R"
+	temp = temp + str(bin_to_dec(machineCode[11:16]))
+	arg3str.append(temp)
+	arg2.append(machineCode[22:27])
+	temp = "R"
+	temp = temp + str(bin_to_dec(machineCode[22:27]))
+	arg2str.append(temp)
+	arg1.append(machineCode[28:32])
+	temp = "\tR"
+	temp = temp + str(bin_to_dec(machineCode[28:32]))
+	arg1str.append(temp)
+	#function
+def dtype(machineCode = ""):
+	print
+	#function
 ################################################################
 #data structures
 ################################################################
@@ -53,61 +144,115 @@ binMem = [] 		# <type 'list'>: ['11111111111111111111111111111111', '11111111111
 valid = []
 opcode = []
 ################################################################
-
+#open and read file
 machineCodeFile = open("test2_bin.txt")
 machineCode = machineCodeFile.readlines()
 machineCodeFile.close()
+memCurrent = 96
 for i in machineCode:
 	op = bin_to_dec(i[0:11])
+	instrSpaced.append(get_spaced_instr(i))
 	if(op >= 160 and op <= 191):
 		opcodeStr.append("B")
 		opcode.append(i[0:6])
+		#btype()
+		validStr.append('Y')
 	elif(op == 1104):
 		opcodeStr.append("AND")
 		opcode.append(i[0:11])
+		rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
+		validStr.append('Y')
 	elif(op == 1112):
 		opcodeStr.append("ADD")
 		opcode.append(i[0:11])
+		rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
+		validStr.append('Y')
 	elif(op == 1160 or op == 1161):
 		opcodeStr.append("ADDI")
 		opcode.append(i[0:10])
+		itype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
+		validStr.append('Y')
 	elif(op == 1360):
 		opcodeStr.append("ORR")
 		opcode.append(i[0:11])
+		rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
+		validStr.append('Y')
 	elif(op >= 1440 and op <= 1447):
 		opcodeStr.append("CBZ")
 		opcode.append(i[0:8])
+		#c_btype()
+		validStr.append('Y')
 	elif(op >= 1448 and op <= 1455):
 		opcodeStr.append("CBNZ")
 		opcode.append(i[0:8])
+		#c_btype()
+		validStr.append('Y')
 	elif(op == 1624):
 		opcodeStr.append("SUB")
 		opcode.append(i[0:11])
+		rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
+		validStr.append('Y')
 	elif(op == 1672 and op == 1673):
 		opcodeStr.append("SUBI")
 		opcode.append(i[0:10])
+		itype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
+		validStr.append('Y')
 	elif((op >= 1648 and op <= 1687) and (op != 1672 or op != 1673)):
 		opcodeStr.append("MOVZ")
 		opcode.append(i[0:9])
+		#imtype()
+		validStr.append('Y')
 	elif(op >= 1940 and op <= 1943):
 		opcodeStr.append("MOVK")
 		opcode.append(i[0:9])
+		#imtype()
+		validStr.append('Y')
 	elif(op == 1690):
 		opcodeStr.append("LSR")
 		opcode.append(i[0:11])
+		#rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
+		validStr.append('Y')
 	elif(op == 1691):
 		opcodeStr.append("LSL")
 		opcode.append(i[0:11])
+		#rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
+		validStr.append('Y')
 	elif(op == 1984):
 		opcodeStr.append("STUR")
 		opcode.append(i[0:11])
+		#dtype()
+		validStr.append('Y')
 	elif(op == 1986):
 		opcodeStr.append("LDUR")
 		opcode.append(i[0:11])
+		#dtype()
+		validStr.append('Y')
 	elif(op == 2038):
 		opcodeStr.append("BREAK")
 		opcode.append(i[0:11])
-print opcodeStr
-print opcode
+		## what do we do for break??
+		validStr.append('Y')
+	else:
+		opcodeStr.append("error")
+		opcode.append("")
+		validStr.append('N')
+elementCount = 0
+for i in machineCode:
+	print "instruction " + str(elementCount)
+	elementCount = elementCount + 1
+	print "opcodeStr: " + opcodeStr[elementCount]
+	print "validStr: " + validStr[elementCount]
+	print "instrSpaced: " + instrSpaced[elementCount]
+	print "arg1: " + arg1[elementCount]
+	print "arg2: " + arg2[elementCount]
+	print "arg3: " + arg3[elementCount]
+	print "arg1Str: " + arg1Str[elementCount]
+	print "arg2Str: " + arg2Str[elementCount]
+	print "arg3Str: " + arg3Str[elementCount]
+	#print "mem: " + mem[elementCount]
+	#print "binMem: " + binMem[elementCount]
+	#print "valid: " + valid[elementCount]
+	print "opcode: " + opcode[elementCount]
+	
 
 

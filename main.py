@@ -85,42 +85,52 @@ def get_spaced_instr(instr = ""):
 	#function	
 
 def btype(arg1, arg1str, machineCode = ""):
-	arg1.append(machineCode[7:31])
+	arg1.append(machineCode[7:32])
 	temp = "#"
-	temp = temp + str(bin_to_dec(machineCode[7:31]))
+	temp = temp + str(bin_to_dec(machineCode[7:32]))
 	arg1str.append(temp)
 	#function
 def	c_btype(arg1, arg1str, arg2, arg2str, machineCode = ""):
-	arg1.append(machineCode[27:31])
+	arg1.append(machineCode[28:32])
 	temp = "R"
-	temp = temp + str(bin_to_dec(machineCode[27:31]))
+	temp = temp + str(bin_to_dec(machineCode[28:32]))
 	arg1str.append(temp)
-	arg2.append(machineCode[9:26])
+	arg2.append(machineCode[9:27])
 	temp = "#"
-	temp = temp + str(bin_to_dec(machineCode[9:26]))
+	temp = temp + str(bin_to_dec(machineCode[9:27]))
 	arg2str.append(temp)
 	#function
-def imtype(machineCode = ""):
-	print
+def imtype(arg1, arg1str, arg2, arg2str, machineCode = ""):
+	arg1.append(machineCode[28:32])
+	temp = "R"
+	temp = temp + str(bin_to_dec(machineCode[28:32]))
+	arg1str.append(temp)
+	arg2.append(machineCode[9:27])
+	temp = "#"
+	temp = temp + str(bin_to_dec(machineCode[9:27]))
+	arg2str.append(temp)
 	#function
 def itype(arg1, arg1str, arg2, arg2str, arg3, arg3str, machineCode = ""):
-	arg3.append(machineCode[10:21])
+	arg3.append(machineCode[10:22])
 	temp = "#"
-	temp = temp + str(bin_to_dec(machineCode[10:21]))
+	temp = temp + str(bin_to_dec(machineCode[10:22]))
 	arg3str.append(temp)
-	arg2.append(machineCode[22:26])
+	arg2.append(machineCode[22:27])
 	temp = "R"
-	temp = temp + str(bin_to_dec(machineCode[22:26]))
+	temp = temp + str(bin_to_dec(machineCode[22:27]))
 	arg2str.append(temp)
-	arg1.append(machineCode[27:31])
+	arg1.append(machineCode[28:32])
 	temp = "R"
-	temp = temp + str(bin_to_dec(machineCode[27:31]))
+	temp = temp + str(bin_to_dec(machineCode[28:32]))
 	arg1str.append(temp)
-	print
 	#function
 def rtype(arg1, arg1str, arg2, arg2str, arg3, arg3str, machineCode = ""):
+	op = bin_to_dec(i[0:11])
 	arg3.append(machineCode[11:16])
-	temp = "R"
+	if(op == 1690 or op == 1691):
+		temp = "#"
+	else:	
+		temp = "R"
 	temp = temp + str(bin_to_dec(machineCode[11:16]))
 	arg3str.append(temp)
 	arg2.append(machineCode[22:27])
@@ -133,7 +143,19 @@ def rtype(arg1, arg1str, arg2, arg2str, arg3, arg3str, machineCode = ""):
 	arg1str.append(temp)
 	#function
 def dtype(machineCode = ""):
-	print
+	arg3.append(machineCode[10:22])
+	temp = "#"
+	temp = temp + str(bin_to_dec(machineCode[10:22]))
+	temp = temp + "]"
+	arg3str.append(temp)
+	arg2.append(machineCode[22:27])
+	temp = "R"
+	temp = temp + str(bin_to_dec(machineCode[22:27]))
+	arg2str.append(temp)
+	arg1.append(machineCode[28:32])
+	temp = "R"
+	temp = temp + str(bin_to_dec(machineCode[28:32]))
+	arg1str.append(temp)
 	#function
 ################################################################
 #data structures
@@ -210,7 +232,7 @@ for i in machineCode:
 		opcode.append(i[0:11])
 		rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
 		validStr.append('Y')
-	elif(op == 1672 and op == 1673):
+	elif(op == 1672 or op == 1673):
 		opcodeStr.append("SUBI")
 		opcode.append(i[0:10])
 		itype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
@@ -260,7 +282,15 @@ for i in machineCode:
 	#print "instruction " + str(elementCount)
 	#print "opcodeStr: " + opcodeStr[elementCount]
 	#print "validStr: " + validStr[elementCount]
-	print instrSpaced[elementCount] + "\t" + str(mem[elementCount]) + "\t" + opcodeStr[elementCount] + " " + arg1Str[elementCount] + ", " + arg2Str[elementCount] + ", " + arg3Str[elementCount]
+	if(arg2Str[elementCount] != ""):
+		comma1 = ", "
+	else:
+		comma1 = ""
+	if(arg3Str[elementCount] != ""):
+		comma2 = ", "
+	else:
+		comma2 = ""
+	print instrSpaced[elementCount] + "\t" + str(mem[elementCount]) + "\t" + opcodeStr[elementCount] + " " + arg1Str[elementCount] + comma1 + arg2Str[elementCount] + comma2 + arg3Str[elementCount]
 	#print "arg1: " + arg1[elementCount]
 	#print "arg2: " + arg2[elementCount]
 	#print "arg3: " + arg3[elementCount]

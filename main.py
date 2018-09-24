@@ -1,4 +1,3 @@
-print("Python Program Running...\n")
 #coverts binary to decimal. EX: bin_to_dec("1001011") = 75
 def bin_to_dec(number = ""):
 	#init return value to 0
@@ -25,11 +24,6 @@ def bin_to_dec(number = ""):
 	return decimal_number
 ################################################################
 def get_spaced_instr(instr = ""):
-	#verify instruction is 32 bits
-	if(True):
-		#return "error"
-		print str(len(instr))
-	
 	# example '00100000000000010000000000001010' --> '10001011 000 00010 00000 00000 100011'
 	temp = "" + instr[0:8]
 	temp = temp + " "
@@ -91,24 +85,27 @@ def btype(arg1, arg1str, machineCode = ""):
 	arg1str.append(temp)
 	#function
 def	c_btype(arg1, arg1str, arg2, arg2str, machineCode = ""):
-	arg1.append(machineCode[28:32])
+	arg1.append(machineCode[27:32])
 	temp = "R"
-	temp = temp + str(bin_to_dec(machineCode[28:32]))
+	temp = temp + str(bin_to_dec(machineCode[27:32]))
 	arg1str.append(temp)
 	arg2.append(machineCode[9:27])
 	temp = "#"
 	temp = temp + str(bin_to_dec(machineCode[9:27]))
 	arg2str.append(temp)
 	#function
-def imtype(arg1, arg1str, arg2, arg2str, machineCode = ""):
-	arg1.append(machineCode[28:32])
+def imtype(arg1, arg1str, arg2, arg2str, arg3, arg3str, machineCode = ""):
+	arg1.append(machineCode[27:32])
 	temp = "R"
-	temp = temp + str(bin_to_dec(machineCode[28:32]))
+	temp = temp + str(bin_to_dec(machineCode[27:32]))
 	arg1str.append(temp)
-	arg2.append(machineCode[9:27])
-	temp = "#"
-	temp = temp + str(bin_to_dec(machineCode[9:27]))
+	arg2.append(machineCode[11:27])
+	temp = ""
+	temp = temp + str(bin_to_dec(machineCode[11:27]))
 	arg2str.append(temp)
+	arg3.append(machineCode[9:11])
+	temp = "LSL " + str(bin_to_dec(machineCode[9:11]) * 16)
+	arg3Str.append(temp)
 	#function
 def itype(arg1, arg1str, arg2, arg2str, arg3, arg3str, machineCode = ""):
 	arg3.append(machineCode[10:22])
@@ -119,37 +116,39 @@ def itype(arg1, arg1str, arg2, arg2str, arg3, arg3str, machineCode = ""):
 	temp = "R"
 	temp = temp + str(bin_to_dec(machineCode[22:27]))
 	arg2str.append(temp)
-	arg1.append(machineCode[28:32])
+	arg1.append(machineCode[27:32])
 	temp = "R"
-	temp = temp + str(bin_to_dec(machineCode[28:32]))
+	temp = temp + str(bin_to_dec(machineCode[27:32]))
 	arg1str.append(temp)
 	#function
 def rtype(arg1, arg1str, arg2, arg2str, arg3, arg3str, machineCode = ""):
 	op = bin_to_dec(i[0:11])
-	arg3.append(machineCode[11:16])
-	if(op == 1690 or op == 1691):
+	if(op == 1690 or op == 1691): #if LSR or LSL
+		arg3.append(machineCode[16:22])
 		temp = "#"
+		temp = temp + str(bin_to_dec(machineCode[16:22]))
 	else:	
+		arg3.append(machineCode[11:16])
 		temp = "R"
-	temp = temp + str(bin_to_dec(machineCode[11:16]))
+		temp = temp + str(bin_to_dec(machineCode[11:16]))
 	arg3str.append(temp)
-	arg2.append(machineCode[22:27])
+	arg2.append(machineCode[23:27])
 	temp = "R"
-	temp = temp + str(bin_to_dec(machineCode[22:27]))
+	temp = temp + str(bin_to_dec(machineCode[23:27]))
 	arg2str.append(temp)
-	arg1.append(machineCode[28:32])
+	arg1.append(machineCode[27:32])
 	temp = "R"
-	temp = temp + str(bin_to_dec(machineCode[28:32]))
+	temp = temp + str(bin_to_dec(machineCode[27:32]))
 	arg1str.append(temp)
 	#function
-def dtype(machineCode = ""):
-	arg3.append(machineCode[10:22])
+def dtype(arg1, arg1str, arg2, arg2str, arg3, arg3str, machineCode = ""):
+	arg3.append(machineCode[11:20])
 	temp = "#"
-	temp = temp + str(bin_to_dec(machineCode[10:22]))
+	temp = temp + str(bin_to_dec(machineCode[11:20]))
 	temp = temp + "]"
 	arg3str.append(temp)
 	arg2.append(machineCode[22:27])
-	temp = "R"
+	temp = "[R"
 	temp = temp + str(bin_to_dec(machineCode[22:27]))
 	arg2str.append(temp)
 	arg1.append(machineCode[28:32])
@@ -173,135 +172,150 @@ mem = [] 			# <type 'list'>: [-1, -2, -3, 1, 2, 3, 0, 0, 5, -5, 6, 0, 0, 0, 0, 0
 binMem = [] 		# <type 'list'>: ['11111111111111111111111111111111', '11111111111111111111111111111110', ...]
 valid = []
 opcode = []
+isData = []
 ################################################################
 #open and read file
 machineCodeFile = open("test2_bin.txt")
 machineCode = machineCodeFile.readlines()
 machineCodeFile.close()
 memCurrent = 96
+data_section = False
 for i in machineCode:
 	op = bin_to_dec(i[0:11])
 	instrSpaced.append(get_spaced_instr(i))
 	mem.append(memCurrent)
 	memCurrent = memCurrent + 4
-	if(op >= 160 and op <= 191):
-		opcodeStr.append("B")
-		opcode.append(i[0:6])
-		btype(arg1, arg1Str, i)
-		arg2Str.append("")
+	if(data_section == False):
+		isData.append(False)
+		if(op >= 160 and op <= 191):
+			opcodeStr.append("B")
+			opcode.append(i[0:6])
+			btype(arg1, arg1Str, i)
+			arg2Str.append("")
+			arg2.append("")
+			arg3Str.append("")
+			arg3.append("")
+			validStr.append('Y')
+		elif(op == 1104):
+			opcodeStr.append("AND")
+			opcode.append(i[0:11])
+			rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
+			validStr.append('Y')
+		elif(op == 1112):
+			opcodeStr.append("ADD")
+			opcode.append(i[0:11])
+			rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
+			validStr.append('Y')
+		elif(op == 1160 or op == 1161):
+			opcodeStr.append("ADDI")
+			opcode.append(i[0:10])
+			itype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
+			validStr.append('Y')
+		elif(op == 1360):
+			opcodeStr.append("ORR")
+			opcode.append(i[0:11])
+			rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
+			validStr.append('Y')
+		elif(op >= 1440 and op <= 1447):
+			opcodeStr.append("CBZ")
+			opcode.append(i[0:8])
+			c_btype(arg1, arg1Str, arg2, arg2Str, i)
+			arg3Str.append("")
+			arg3.append("")
+			validStr.append('Y')
+		elif(op >= 1448 and op <= 1455):
+			opcodeStr.append("CBNZ")
+			opcode.append(i[0:8])
+			c_btype(arg1, arg1Str, arg2, arg2Str, i)
+			arg3Str.append("")
+			arg3.append("")
+			validStr.append('Y')
+		elif(op == 1624):
+			opcodeStr.append("SUB")
+			opcode.append(i[0:11])
+			rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
+			validStr.append('Y')
+		elif(op == 1672 or op == 1673):
+			opcodeStr.append("SUBI")
+			opcode.append(i[0:10])
+			itype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
+			validStr.append('Y')
+		elif(op >= 1684 and op <= 1687):
+			opcodeStr.append("MOVZ")
+			opcode.append(i[0:9])
+			imtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
+			validStr.append('Y')
+		elif(op >= 1940 and op <= 1943):
+			opcodeStr.append("MOVK")
+			opcode.append(i[0:9])
+			imtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
+			validStr.append('Y')
+		elif(op == 1690):
+			opcodeStr.append("LSR")
+			opcode.append(i[0:11])
+			rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
+			validStr.append('Y')
+		elif(op == 1691):
+			opcodeStr.append("LSL")
+			opcode.append(i[0:11])
+			rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
+			validStr.append('Y')
+		elif(op == 1984):
+			opcodeStr.append("STUR")
+			opcode.append(i[0:11])
+			dtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
+			validStr.append('Y')
+		elif(op == 1986):
+			opcodeStr.append("LDUR")
+			opcode.append(i[0:11])
+			dtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
+			validStr.append('Y')
+		elif(op == 2038):
+			opcodeStr.append("BREAK")
+			opcode.append(i[0:11])
+			arg1.append("")
+			arg2.append("")
+			arg3.append("")
+			arg1Str.append("")
+			arg2Str.append("")
+			arg3Str.append("")
+			validStr.append('Y')
+			data_section = True
+		else:
+			opcodeStr.append("error")
+			opcode.append("")
+			arg1.append("")
+			arg2.append("")
+			arg3.append("")
+			arg1Str.append("")
+			arg2Str.append("")
+			arg3Str.append("")
+			validStr.append('N')
+	else:
+		isData.append(True)
+		arg1.append("")
 		arg2.append("")
-		arg3Str.append("")
 		arg3.append("")
-		validStr.append('Y')
-	elif(op == 1104):
-		opcodeStr.append("AND")
-		opcode.append(i[0:11])
-		rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
-		validStr.append('Y')
-	elif(op == 1112):
-		opcodeStr.append("ADD")
-		opcode.append(i[0:11])
-		rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
-		validStr.append('Y')
-	elif(op == 1160 or op == 1161):
-		opcodeStr.append("ADDI")
-		opcode.append(i[0:10])
-		itype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
-		validStr.append('Y')
-	elif(op == 1360):
-		opcodeStr.append("ORR")
-		opcode.append(i[0:11])
-		rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
-		validStr.append('Y')
-	elif(op >= 1440 and op <= 1447):
-		opcodeStr.append("CBZ")
-		opcode.append(i[0:8])
-		c_btype(arg1, arg1Str, arg2, arg2Str, i)
+		arg1Str.append("")
+		arg2Str.append("")
 		arg3Str.append("")
-		arg3.append("")
 		validStr.append('Y')
-	elif(op >= 1448 and op <= 1455):
-		opcodeStr.append("CBNZ")
-		opcode.append(i[0:8])
-		c_btype(arg1, arg1Str, arg2, arg2Str, i)
-		arg3Str.append("")
-		arg3.append("")
-		validStr.append('Y')
-	elif(op == 1624):
-		opcodeStr.append("SUB")
-		opcode.append(i[0:11])
-		rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
-		validStr.append('Y')
-	elif(op == 1672 or op == 1673):
-		opcodeStr.append("SUBI")
-		opcode.append(i[0:10])
-		itype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
-		validStr.append('Y')
-	elif(op >= 1684 and op <= 1687):
-		opcodeStr.append("MOVZ")
-		opcode.append(i[0:9])
-		#imtype()
-		validStr.append('Y')
-	elif(op >= 1940 and op <= 1943):
-		opcodeStr.append("MOVK")
-		opcode.append(i[0:9])
-		#imtype()
-		validStr.append('Y')
-	elif(op == 1690):
-		opcodeStr.append("LSR")
-		opcode.append(i[0:11])
-		rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
-		validStr.append('Y')
-	elif(op == 1691):
-		opcodeStr.append("LSL")
-		opcode.append(i[0:11])
-		rtype(arg1, arg1Str, arg2, arg2Str, arg3, arg3Str, i)
-		validStr.append('Y')
-	elif(op == 1984):
-		opcodeStr.append("STUR")
-		opcode.append(i[0:11])
-		#dtype()
-		validStr.append('Y')
-	elif(op == 1986):
-		opcodeStr.append("LDUR")
-		opcode.append(i[0:11])
-		#dtype()
-		validStr.append('Y')
-	elif(op == 2038):
-		opcodeStr.append("BREAK")
-		opcode.append(i[0:11])
-		## what do we do for break??
-		validStr.append('Y')
-	else:
-		opcodeStr.append("error")
-		opcode.append("")
-		validStr.append('N')
-elementCount = 0
-for i in machineCode:
-	#print "\n\nMachine code: " + i
-	#print "instruction " + str(elementCount)
-	#print "opcodeStr: " + opcodeStr[elementCount]
-	#print "validStr: " + validStr[elementCount]
-	if(arg2Str[elementCount] != ""):
-		comma1 = ", "
-	else:
-		comma1 = ""
-	if(arg3Str[elementCount] != ""):
-		comma2 = ", "
-	else:
-		comma2 = ""
-	print instrSpaced[elementCount] + "\t" + str(mem[elementCount]) + "\t" + opcodeStr[elementCount] + " " + arg1Str[elementCount] + comma1 + arg2Str[elementCount] + comma2 + arg3Str[elementCount]
-	#print "arg1: " + arg1[elementCount]
-	#print "arg2: " + arg2[elementCount]
-	#print "arg3: " + arg3[elementCount]
-	#print "arg1Str: " + arg1Str[elementCount]
-	#print "arg2Str: " + arg2Str[elementCount]
-	#print "arg3Str: " + arg3Str[elementCount]
-	#print "mem: " + mem[elementCount]
-	#print "binMem: " + binMem[elementCount]
-	#print "valid: " + valid[elementCount]
-	#print "opcode: " + opcode[elementCount]
-	elementCount = elementCount + 1
 	
-
+elementCount = 0
+dataMem = 0
+for i in machineCode:
+	if(isData[elementCount] == False):
+		if(arg2Str[elementCount] != ""):
+			comma1 = ", "
+		else:
+			comma1 = ""
+		if(arg3Str[elementCount] != ""):
+			comma2 = ", "
+		else:
+			comma2 = ""
+		print instrSpaced[elementCount] + "\t" + str(mem[elementCount]) + "\t" + opcodeStr[elementCount] + " " + arg1Str[elementCount] + comma1 + arg2Str[elementCount] + comma2 + arg3Str[elementCount]
+	else:
+		dataMem = dataMem - 1
+		print i + "\t" + str(mem[elementCount]) + " " + str(dataMem)
+	elementCount = elementCount + 1
 

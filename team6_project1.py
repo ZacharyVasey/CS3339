@@ -69,20 +69,12 @@ class Dissemble(object):
 			self.numLinesText += 1
 			# Populate memory.
 			self.memLines.append(k)
-			k += 4
 			# Get the first bits in bin & dec.
 			elvBin = line[0:11]
 			elvDec = int(elvBin, 2)
 			# TESTPRINT
 			# print elvBin + '  -  '  + str(elvDec)
-			# Check if each dec is recognized instruction.
-			if (elvDec == 0):  # Check if nop
-				if (int(line, 2) == 0):     # DOUBLE CHECK
-					self.isInstr.append(True)
-					self.opCodeStr.append("NOP")
-					self.insType.append("NOP")
-					self.data.append('')
-			elif (elvDec >= 160 and elvDec <= 191):
+			if (elvDec >= 160 and elvDec <= 191):
 				self.isInstr.append(True)
 				self.opCodeStr.append("B")
 				self.insType.append("B")
@@ -167,11 +159,25 @@ class Dissemble(object):
 				self.opCodeStr.append("BREAK")
 				self.insType.append("BREAK")
 				self.data.append('')
+			# At this point no ops have been found to match ranges.
+			elif (True):
+				# Checking if entire line == 0 (NOP)
+				if (int(line, 2) == 0):
+					# print "NOP @ line #" + str(k)
+					self.isInstr.append(True)
+					self.opCodeStr.append("NOP")
+					self.insType.append("NOP")
+					self.data.append('')
+				# If line has no matching op, but != 0, then its data.
+				else:
+					# print "Data @ line #" + str(k)
+					self.isInstr.append(False)
+					self.opCodeStr.append('')
+					self.insType.append("DATA")
+					self.data.append('')
 			else:
-				self.isInstr.append(False)
-				self.opCodeStr.append('')
-				self.insType.append("DATA")
-				self.data.append(42)
+				print "You shouldn't have come this far."
+			k += 4
 		# TESTPRINT
 		# print 'isInstr[]:  '
 		# print self.isInstr
@@ -300,7 +306,7 @@ class Dissemble(object):
 				self.shiftNum.append('')
 				self.shamNum.append('')
 			# Test for Data
-			elif (self.insType[k] == 'DATA'):
+			elif (self.insType[k] == "DATA"):
 				self.rmRegNum.append('')
 				self.rnRegNum.append('')
 				self.rdRtRegNum.append('')
@@ -314,12 +320,11 @@ class Dissemble(object):
 					twoC = (0xFFFFFFFF ^ tempBin) + 1
 					dataVal = int(twoC) * -1
 					self.data[k] = dataVal
-					# TESTPRINT
-					# print " -" + str(twoC)
-					# print " dataVal: " + str(dataVal)
 				# If data is positive...
 				else:
-					self.data[k] = (int(tempBin))
+					# TESTPRINT
+					# print "Positive data at line #" + str(self.memLines[k])
+					self.data[k] = int(line, 2)
 			else:
 				print "Error: unknown data type."
 				self.rmRegNum.append('')
@@ -414,6 +419,8 @@ class Dissemble(object):
 				line += '\t' + self.opCodeStr[k]
 			elif (self.insType[k] == 'DATA'):
 				line += '\t' + str(self.data[k])
+			elif (self.insType[k] == "NOP"):
+				line += '\t' + str(self.opCodeStr[k])
 			self.finalText += line + '\n'
 			# print line
 		print self.finalText
@@ -440,16 +447,13 @@ class Dissemble(object):
 ##################################################################################
 import sys, getopt
 def main():
-
 	diss = Dissemble()
-
 	# Get command line data
 	numCmdArgs = len(sys.argv)  # Store number of cmd args.
 	cmdArgList = str(sys.argv)  # Store list of cmd args.
 	# TESTPRINT
 	# print "Number of command line arguments: %d" % numCmdArgs
 	# print "List of command line arguments: %s" % cmdArgList
-
 	# Check command line data
 	inFile = ''     # Store input file name
 	outFile = ''    # Store output file name
@@ -461,7 +465,6 @@ def main():
 	# TESTPRINT
 	# print "inFile: " + inFile
 	# print "outFile: " + outFile
-
 	# Store command line file names to class instance.
 	print
 	diss.iFile = inFile     # Save input file name to diss object.
@@ -469,8 +472,6 @@ def main():
 	# TESTPRINT
 	# print "In diss instance, iFile is: " + diss.iFile
 	# print "In diss instance, oFile is: " + diss.oFile
-
 	diss.run()
-
 if __name__== "__main__":
     main()

@@ -117,7 +117,12 @@ class Dissemble(object):
                 self.opCodeStr.append("CBNZ")
                 self.insType.append("CB")
                 self.data.append('')
-            elif (elvDec == 1624):
+            elif (elvDec == 1616):
+                self.isInstr.append(True)
+                self.opCodeStr.append("EOR")
+                self.insType.append("R")
+                self.data.append('')
+			elif (elvDec == 1624):
                 self.isInstr.append(True)
                 self.opCodeStr.append("SUB")
                 self.insType.append("R")

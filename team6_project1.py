@@ -199,7 +199,7 @@ class Dissemble(object):
 		# print 'Testing processRegs()...'
 		k = 0
 		for line in self.machineLines:
-            # Grab binary line.
+			# Grab binary line.
 			tempBin = int(line, base=2)
 			# Get Rm
 			rmNum = ((tempBin & self.rmMask) >> 16)
@@ -239,7 +239,15 @@ class Dissemble(object):
 				self.rmRegNum.append('')
 				self.rnRegNum.append(rnNum)
 				self.rdRtRegNum.append(rdRtNum)
-				self.immNum.append(immI)
+				# Determine if imm is +/-
+				testBit = immI >> 11    # Grab leftmost bit of imm.
+				if (testBit == 0):
+					self.immNum.append(int(immI))
+				else:
+					immI = immI - 1
+					immI = immI ^ 0xFFF
+					immI = int(immI) * -1
+					self.immNum.append(int(immI))
 				self.addrNum.append('')
 				self.shiftNum.append('')
 				self.shamNum.append('')
@@ -258,7 +266,14 @@ class Dissemble(object):
 				self.rnRegNum.append('')
 				self.rdRtRegNum.append(rdRtNum)
 				self.immNum.append('')
-				self.addrNum.append(adCB)
+				testBit = adCB >> 18
+				if (testBit == 0):
+					self.addrNum.append(adCB)
+				else:
+					adCB = adCB - 1
+					adCB = adCB ^ 0b1111111111111111111
+					adCB = int(adCB) * -1
+					self.addrNum.append(adCB)
 				self.shiftNum.append('')
 				self.shamNum.append('')
 			# Test for IM-Format
@@ -284,7 +299,21 @@ class Dissemble(object):
 				self.rnRegNum.append('')
 				self.rdRtRegNum.append('')
 				self.immNum.append('')
-				self.addrNum.append(adB)
+				#TESTPRINT
+				# print "   adB: "
+				# print bin(adB)
+				testBit = adB >> 24
+				if (testBit == 0):
+					self.addrNum.append(adB)
+				else:
+					# TESTPRINT
+					# print "   neg adB: " + str(bin(adB))
+					adB = adB - 1
+					# print "   neg adB - 1: " + str(bin(adB))
+					adB = adB ^ 0b11111111111111111111111111
+					# print "   neg adB ^ F: " + str(bin(adB))
+					adB = int(adB) * -1
+					self.addrNum.append(adB)
 				self.shiftNum.append('')
 				self.shamNum.append('')
 			# Test for BREAK
@@ -474,4 +503,4 @@ def main():
 	# print "In diss instance, oFile is: " + diss.oFile
 	diss.run()
 if __name__== "__main__":
-    main()
+	main()

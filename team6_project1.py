@@ -114,7 +114,7 @@ class Dissemble(object):
 				self.opCodeStr.append("SUB")
 				self.insType.append("R")
 				self.data.append('')
-			elif (elvDec == 1616):
+			elif (elvDec == 1872):
 				self.isInstr.append(True)
 				self.opCodeStr.append("EOR")
 				self.insType.append("R")
@@ -415,11 +415,14 @@ class Dissemble(object):
 			# Print R formats
 			if (self.insType[k] == 'R'):
 				line = line + '\t' + self.opCodeStr[k]
-				line = line + '\t' + 'R' + str(self.rdRtRegNum[k]) + ', '
-				line = line + ' ' + 'R' + str(self.rmRegNum[k]) + ','
+				if(self.shamNum[k] == ''):
+					line = line + '\t' + 'R' + str(self.rdRtRegNum[k]) + ', '
+				else:
+					line = line + '\t' + 'R' + str(self.rmRegNum[k]) + ', '
+				line = line + ' ' + 'R' + str(self.rnRegNum[k]) + ','
 				# Does this R-format use shift?
 				if (self.shamNum[k] == ''):
-					line = line + ' ' + 'R' + str(self.rnRegNum[k])
+					line = line + ' ' + 'R' + str(self.rmRegNum[k])
 				else:
 					line = line + ' ' + '#' + str(self.shamNum[k])
 			elif (self.insType[k] == 'I'):

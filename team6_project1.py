@@ -460,7 +460,7 @@ class Dissemble(object):
 	#   writeOut:  writes final product to text file.
 	##################################################################################
 	def writeOut(self):
-		outFile = open(self.oFile, 'w')
+		outFile = open(self.oFile + "_dis.txt", 'w')
 		outFile.write(self.finalText)
 		outFile.close()
 	##################################################################################
